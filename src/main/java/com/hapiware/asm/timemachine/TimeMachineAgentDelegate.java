@@ -12,16 +12,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
-
 
 /**
  * {@code TimeMachineAgentDelegate} can be used to shift system time <i>without touching the system
@@ -54,53 +44,11 @@ import org.w3c.dom.Text;
  * 
  * 
  * 
- * <h3>Configuration elements</h3>
+ * <h3>Time shift configuration</h3>
+ * Time shift is configured using {@code /agent/configuration} element with a single valid
+ * {@code String} object which presents time shift.
  * 
- * The configuration elements are child elements of {@code /agent/configuration} element and are:
- * <ul>
- * 		<li>{@code <include>}</li>
- * 		<li>{@code <exclude>}</li>
- * 		<li>{@code <time>}</li>
- * </ul>
- * 
- * The configuration elements must always have at least one {@code <include>} rule element,
- * zero or more {@code <exclude>} elements and exactly one valid {@code <time>} element.
- * 
- *
- *
- * <h4>{@code <include>} element</h4>
- * 
- * There must be always at least one {@code <include>} element. If there are more than one they are
- * all used (i.e. ORed) for matching the possible candidates for instrumentation.
- * <p>
- * {@code <include>} element is a regular expression which is used to match all the classes to be
- * instrumented (i.e. those classes which somehow reads the system time).
- * <b>Notice</b> that the class names are presented in the internal form of fully qualified class
- * names as defined in The Java Virtual Machine Specification (e.g. "java/util/List"). So, when
- * you create {@code <include>} and {@code <exclude>} elements, remember that package names are
- * separated with slash (/) instead of period (.). See <a href="#examples">examples</a> in the end
- * of the document.
- *
- * 
- * 
- * <h4>{@code <exclude>} element</h4>
- * 
- * {@code <exclude>} element is optional but there can be several of them. {@code <exclude>} can be
- * used to ensure that the instrumentation is not done for some classes.
- * <p>
- * {@code <exclude>} element is a regular expression which is used to match all the classes
- * <b>not to be</b> instrumented.
- * <b>Notice</b> that the class names are presented in the internal form of fully qualified class
- * names as defined in The Java Virtual Machine Specification (e.g. "java/util/List"). So, when
- * you create {@code <include>} and {@code <exclude>} elements, remember that package names are
- * separated with slash (/) instead of period (.). See <a href="#examples">examples</a> in the end
- * of the document.
- * 
- * 
- * 
- * <h4>{@code <time>} element</h4>
- * 
- * The {@code <time>} element has the following format:<br>
+ * The {@code /agent/configuration} element has the following format:<br>
  * <blockquote>
  * 		{@code <time>[+|-]y-M-d@H:m:s</time>}
  * </blockquote>
@@ -147,17 +95,14 @@ import org.w3c.dom.Text;
  * 	<agent>
  * 		<delegate>com.hapiware.asm.timemachine.TimeMachineAgentDelegate</delegate>
  * 		<classpath>
- * 			<entry>/users/me/agent/target/timemachine-delegate-1.0.0.jar</entry>
+ * 			<entry>/users/me/agent/target/timemachine-delegate-2.0.0.jar</entry>
  * 			<entry>/usr/local/asm-3.1/lib/all/all-asm-3.1.jar</entry>
  * 		</classpath>
- * 		<configuration unmarshaller="com.hapiware.asm.timemachine.TimeMachineAgentDelegate">
- * 			<!--
- * 				Moves time two years and 5 months backward.
- * 				The time shift is done for every class.
- * 			-->
- * 			<include>.+</include>
- * 			<time>-2-5-0@0:0:0</time>
- * 		</configuration>
+ *		<!--
+ *			Moves time two years and 5 months backward.
+ * 			The time shift is done for every class.
+ * 		-->
+ * 		<configuration>-2-5-0@0:0:0</configuration>
  * 	</agent>
  * </xmp>
  * 
@@ -167,18 +112,20 @@ import org.w3c.dom.Text;
  * 	<agent>
  * 		<delegate>com.hapiware.asm.timemachine.TimeMachineAgentDelegate</delegate>
  * 		<classpath>
- * 			<entry>/users/me/agent/target/timemachine-delegate-1.0.0.jar</entry>
+ * 			<entry>/users/me/agent/target/timemachine-delegate-2.0.0.jar</entry>
  * 			<entry>/usr/local/asm-3.1/lib/all/all-asm-3.1.jar</entry>
  * 		</classpath>
- * 		<configuration unmarshaller="com.hapiware.asm.timemachine.TimeMachineAgentDelegate">
- * 			<!--
- * 				Moves time ten days and eight hours forward.
- * 				The time shift is done for every loaded class
- * 				under com.hapiware.* package.
- * 			-->
- * 			<include>^com/hapiware/.+</include>
- * 			<time>+0-0-10@8:0:0</time>
- * 		</configuration>
+ * 
+ * 
+ * 		<!--
+ * 			Moves time ten days and eight hours forward.
+ * 			The time shift is done for every loaded class
+ * 			under com.hapiware.* package.
+ * 		-->
+ * 		<instrumented-class>
+ *			<include>^com/hapiware/.+</include>
+ * 		</instrumented-class>
+ * 		<configuration>+0-0-10@8:0:0</configuration>
  * 	</agent>
  * </xmp>
  * 
@@ -188,18 +135,19 @@ import org.w3c.dom.Text;
  * 	<agent>
  * 		<delegate>com.hapiware.asm.timemachine.TimeMachineAgentDelegate</delegate>
  * 		<classpath>
- * 			<entry>/users/me/agent/target/timemachine-delegate-1.0.0.jar</entry>
+ * 			<entry>/users/me/agent/target/timemachine-delegate-2.0.0.jar</entry>
  * 			<entry>/usr/local/asm-3.1/lib/all/all-asm-3.1.jar</entry>
  * 		</classpath>
- * 		<configuration unmarshaller="com.hapiware.asm.timemachine.TimeMachineAgentDelegate">
- * 			<!--
- * 				Set time to 13th of April 2010 7:15 AM. Remember that January is zero (0).
- * 			-->
+ * 
+ * 		<instrumented-class>
  * 			<include>^com/hapiware/.*f[oi]x/.+</include>
  * 			<include>^com/mysoft/.+</include>
  * 			<exclude>^com/hapiware/.+/CreateCalculationForm</exclude>
- * 			<time>2010-3-13@7:15:0</time>
- * 		</configuration>
+ * 		</instrumented-class>
+ * 		<!--
+ * 			Set time to 13th of April 2010 7:15 AM. Remember that January is zero (0).
+ * 		-->
+ * 		<configuration>2010-3-13@7:15:0</configuration>
  * 	</agent>
  * </xmp>
  *
@@ -219,7 +167,7 @@ import org.w3c.dom.Text;
  * 
  * @see com.hapiware.agent.Agent
  * 
- * @author hapi
+ * @author <a href="http://www.hapiware.com" target="_blank">hapi</a>
  */
 public class TimeMachineAgentDelegate
 {
@@ -243,10 +191,15 @@ public class TimeMachineAgentDelegate
 	 * <b>Notice</b> the difference between this method and 
 	 * the {@code public static void premain(String, Instrumentation} method described in
 	 * {@code java.lang.instrument} package. 
+	 *
+	 * @param includePatterns
+	 * 		A list of patterns to include classes for instrumentation.
+	 * 
+	 * @param excludePatterns
+	 * 		A list patterns to set classes not to be instrumented.
 	 * 
 	 * @param config
-	 * 		Configuration object ({@link Config}) to configure {@link TimeMachineTransformer}.
-	 * 		This is the object returned by {@link #unmarshall(Element)}.
+	 * 		{@code String} to set time shift for {@link TimeMachineTransformer}.
 	 * 
 	 * @param instrumentation
 	 * 		See {@link java.lang.instrument.Instrumentation}
@@ -254,17 +207,30 @@ public class TimeMachineAgentDelegate
 	 * @throws IllegalArgumentException
 	 * 		If there is something wrong with the configuration file.
 	 *
-	 * @see #unmarshall(Element)
 	 * @see java.lang.instrument
 	 */
-	public static void premain(Object config, Instrumentation instrumentation)
+	public static void premain(
+		Pattern[] includePatterns,
+		Pattern[] excludePatterns,
+		Object config,
+		Instrumentation instrumentation
+	)
 	{
 		try 
 		{
-			if(config != null)
-				instrumentation.addTransformer(new TimeMachineTransformer((Config)config));
+			if(config != null) {
+				instrumentation.addTransformer(
+					new TimeMachineTransformer(
+						new Config(
+							includePatterns,
+							excludePatterns,
+							parseTime((String)config)
+						)
+					)
+				);
+			}
 			else {
-				String ex = "A configuration object is missing.";
+				String ex = "Time shift configuration is missing.";
 				throw new IllegalArgumentException(ex);
 			}
 		} 
@@ -278,79 +244,6 @@ public class TimeMachineAgentDelegate
 		}
 	}
 
-	/**
-	 * Parses the configuration node and creates the include and exclude regular expression
-	 * pattern compilations for class matching as well as a proper time shift pattern compilation.
-	 * 
-	 * @param configElement
-	 *		/agent/configuration node from the java agent configuration file.
-	 * 
-	 * @return
-	 * 		Configuration elements ({@link Config}) parsed from the configuration node.
-	 */
-	public static Object unmarshall(Element configElement)
-	{
-		XPath xpath = XPathFactory.newInstance().newXPath();
-		Config config = null;
-		try {
-			// /agent/configuration/include entries.
-			NodeList includeEntries = 
-				(NodeList)xpath.evaluate("./include", configElement, XPathConstants.NODESET);
-			if(includeEntries.getLength() == 0) {
-				String ex = "There are no include rules in TimeMachine configuration file.";
-				throw new IllegalArgumentException(ex);
-			}
-			
-			List<Pattern> includes = new ArrayList<Pattern>();
-			for(int i = 0; i < includeEntries.getLength(); i++) {
-				Node includeEntry = includeEntries.item(i).getFirstChild();
-				if(includeEntry != null)
-					includes.add(Pattern.compile(((Text)includeEntry).getData()));
-			}
-			
-			// /agent/configuration/exclude entries.
-			NodeList excludeEntries = 
-				(NodeList)xpath.evaluate("./exclude", configElement, XPathConstants.NODESET);
-			List<Pattern> excludes = new ArrayList<Pattern>();
-			for(int i = 0; i < excludeEntries.getLength(); i++) {
-				Node excludeEntry = excludeEntries.item(i).getFirstChild();
-				if(excludeEntry != null)
-					excludes.add(Pattern.compile(((Text)excludeEntry).getData()));
-			}
-			
-			// /agent/configuration/time entry.
-			NodeList timeEntries = 
-				(NodeList)xpath.evaluate("./time", configElement, XPathConstants.NODESET);
-			if(timeEntries.getLength() < 1) {
-				String ex =
-					"/agent/configuration/time element is missing from "
-						+ "TimeMachine configuration file."; 
-				throw new IllegalArgumentException(ex);
-			}
-			if(timeEntries.getLength() > 1) {
-				String ex =
-					"Wrong number of /agent/configuration/time elements in TimeMachine "
-						+ "configuration file.";
-				ex += "\n\t-> Only one (1) \"/agent/configuration/time\" element was expected"
-					+ " but " + timeEntries.getLength() + " elements were found.";
-				throw new IllegalArgumentException(ex);
-			}
-			
-			config =
-				new Config(
-					excludes,
-					includes,
-					parseTime(((Text)timeEntries.item(0).getFirstChild()).getData())
-				);
-		}
-		catch(XPathExpressionException e) {
-			e.printStackTrace();
-		}
-
-		return config;
-	}
-
-	
 	/**
 	 * Parses the configuration string as documented in class description
 	 *  
@@ -414,12 +307,20 @@ public class TimeMachineAgentDelegate
 		private final List<Pattern> excludePatterns;
 
 		public Config(
-			List<Pattern> excludePatterns,
-			List<Pattern> includePatterns,
+			Pattern[] includePatterns,
+			Pattern[] excludePatterns,
 			Milliseconds milliseconds)
 		{
-			this.excludePatterns = Collections.unmodifiableList(excludePatterns);
-			this.includePatterns = Collections.unmodifiableList(includePatterns);
+			List<Pattern> patterns = new ArrayList<Pattern>();
+			for(Pattern p : includePatterns)
+				patterns.add(p);
+			this.includePatterns = Collections.unmodifiableList(patterns);
+			
+			patterns = new ArrayList<Pattern>();
+			for(Pattern p : excludePatterns)
+				patterns.add(p);
+			this.excludePatterns = Collections.unmodifiableList(patterns);
+			
 			this.milliseconds = milliseconds;
 		}
 

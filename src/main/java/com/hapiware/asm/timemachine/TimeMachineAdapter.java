@@ -19,7 +19,7 @@ import com.hapiware.asm.timemachine.TimeMachineAgentDelegate.Milliseconds;
  *
  * @see TimeMachineAgentDelegate
  * 
- * @author hapi
+ * @author <a href="http://www.hapiware.com" target="_blank">hapi</a>
  *
  */
 public class TimeMachineAdapter extends MethodAdapter 

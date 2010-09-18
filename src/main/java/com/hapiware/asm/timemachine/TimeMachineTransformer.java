@@ -20,7 +20,7 @@ import com.hapiware.asm.timemachine.TimeMachineAgentDelegate.Config;
  * @see TimeMachineAdapter
  * @see TimeMachineTransformer#transform(ClassLoader, String, Class, ProtectionDomain, byte[])
  *
- * @author hapi
+ * @author <a href="http://www.hapiware.com" target="_blank">hapi</a>
  *
  */
 public class TimeMachineTransformer
