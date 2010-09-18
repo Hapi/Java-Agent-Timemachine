@@ -11,7 +11,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
-import com.hapiware.asm.timemachine.TimeMachineAgentDelegate.Config;
+import com.hapiware.asm.timemachine.TimeMachineAgentDelegate.Milliseconds;
 
 
 /**
@@ -27,16 +27,24 @@ public class TimeMachineTransformer
 	implements
 		ClassFileTransformer
 {
-	private final Config config;
+	private Pattern[] _includePatterns;
+	private Pattern[] _exludePatterns;
+	private final Milliseconds _timeShift;
 
 	public TimeMachineTransformer()
 	{
-		config = null;
+		_timeShift = null;
 	}
 	
-	public TimeMachineTransformer(Config config)
+	public TimeMachineTransformer(
+		Pattern[] includePatterns,
+		Pattern[] excludePatterns,
+		Milliseconds timeShift
+	)
 	{
-		this.config = config;
+		_includePatterns = includePatterns;
+		_exludePatterns = excludePatterns;
+		_timeShift = timeShift;
 	}
 	
 	public byte[] transform(
@@ -48,11 +56,11 @@ public class TimeMachineTransformer
 	)
 		throws IllegalClassFormatException
 	{
-		for(Pattern p : config.getExcludePatterns())
+		for(Pattern p : _exludePatterns)
 			if(p.matcher(className).matches())
 				return null;
 		
-		for(Pattern p : config.getIncludePatterns()) {
+		for(Pattern p : _includePatterns) {
 			if(p.matcher(className).matches()) 
 			{
 				try
@@ -74,7 +82,7 @@ public class TimeMachineTransformer
 							{
 								MethodVisitor mv =
 									super.visitMethod(access, name, desc, signature, exceptions);	
-								return new TimeMachineAdapter(config.getMilliseconds(), mv);
+								return new TimeMachineAdapter(_timeShift, mv);
 							} 
 						},
 						0

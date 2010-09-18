@@ -4,11 +4,8 @@ package com.hapiware.asm.timemachine;
 import java.lang.instrument.Instrumentation;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -221,11 +218,9 @@ public class TimeMachineAgentDelegate
 			if(config != null) {
 				instrumentation.addTransformer(
 					new TimeMachineTransformer(
-						new Config(
-							includePatterns,
-							excludePatterns,
-							parseTime((String)config)
-						)
+						includePatterns,
+						excludePatterns,
+						parseTime((String)config)
 					)
 				);
 			}
@@ -292,55 +287,6 @@ public class TimeMachineAgentDelegate
 		return new Milliseconds(isRelative, millis);
 	}
 
-	/**
-	 * {@code Config} is just used to manage configuration file data.
-	 * <p>
-	 * {@code Config} class is <b>immutable</b>.
-	 * 
-	 * @author hapi
-	 *
-	 */
-	static class Config
-	{
-		private final Milliseconds milliseconds;
-		private final List<Pattern> includePatterns;
-		private final List<Pattern> excludePatterns;
-
-		public Config(
-			Pattern[] includePatterns,
-			Pattern[] excludePatterns,
-			Milliseconds milliseconds)
-		{
-			List<Pattern> patterns = new ArrayList<Pattern>();
-			for(Pattern p : includePatterns)
-				patterns.add(p);
-			this.includePatterns = Collections.unmodifiableList(patterns);
-			
-			patterns = new ArrayList<Pattern>();
-			for(Pattern p : excludePatterns)
-				patterns.add(p);
-			this.excludePatterns = Collections.unmodifiableList(patterns);
-			
-			this.milliseconds = milliseconds;
-		}
-
-		public Milliseconds getMilliseconds()
-		{
-			return milliseconds;
-		}
-
-		public List<Pattern> getIncludePatterns()
-		{
-			return includePatterns;
-		}
-
-		public List<Pattern> getExcludePatterns()
-		{
-			return excludePatterns;
-		}
-	}
-	
-	
 	/**
 	 * {@code Milliseconds} is used to hold relative {@literal (i.e. offset)} or absolute time in
 	 * milliseconds. If time is a relative value then it is supposed to be added to a returned 
