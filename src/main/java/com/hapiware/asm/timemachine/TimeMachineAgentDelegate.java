@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
 /**
  * {@code TimeMachineAgentDelegate} can be used to shift system time <i>without touching the system
  * clock</i>. The trick is to catch all the system time calls and manipulate their byte code
- * directly to achieve the desired result (and this is exactly what is done here :-). Time shift is
- * done only for some specific classes which can be defined in the configuration file.
+ * directly to achieve the desired result. Time shift is done only for some specific classes which
+ * can be defined in the configuration file.
  * <p>
  * 
  * The shift of system time can be relative or absolute. Relative system time shift means that
@@ -38,8 +38,7 @@ import java.util.regex.Pattern;
  * 
  * {@code TimeMachineAgentDelegate} requires {@code com.hapiware.agent.Agent}. For more
  * information see {@code com.hapiware.agent.Agent}.
- * 
- * 
+ *  
  * 
  * <h3>Time shift configuration</h3>
  * Time shift is configured using {@code /agent/configuration} element with a single valid
@@ -119,9 +118,9 @@ import java.util.regex.Pattern;
  * 			The time shift is done for every loaded class
  * 			under com.hapiware.* package.
  * 		-->
- * 		<instrumented-class>
+ * 		<filter>
  *			<include>^com/hapiware/.+</include>
- * 		</instrumented-class>
+ * 		</filter>
  * 		<configuration>+0-0-10@8:0:0</configuration>
  * 	</agent>
  * </xmp>
@@ -136,11 +135,11 @@ import java.util.regex.Pattern;
  * 			<entry>/usr/local/asm-3.1/lib/all/all-asm-3.1.jar</entry>
  * 		</classpath>
  * 
- * 		<instrumented-class>
+ * 		<filter>
  * 			<include>^com/hapiware/.*f[oi]x/.+</include>
  * 			<include>^com/mysoft/.+</include>
  * 			<exclude>^com/hapiware/.+/CreateCalculationForm</exclude>
- * 		</instrumented-class>
+ * 		</filter>
  * 		<!--
  * 			Set time to 13th of April 2010 7:15 AM. Remember that January is zero (0).
  * 		-->
