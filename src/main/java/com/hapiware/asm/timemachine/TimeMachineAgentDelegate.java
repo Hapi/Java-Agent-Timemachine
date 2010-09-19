@@ -34,10 +34,11 @@ import java.util.regex.Pattern;
  * 
  * 
  * 
- * <h3>com.hapiware.agent.Agent required</h3>
+ * <h3>Requirements</h3>
  * 
  * {@code TimeMachineAgentDelegate} requires {@code com.hapiware.agent.Agent}. For more
- * information see {@code com.hapiware.agent.Agent}.
+ * information see {@code com.hapiware.agent.Agent}. Also an ASM 3.0 or later is needed
+ * (see <a href="http://asm.ow2.org/" target="_blank">http://asm.ow2.org/</a>).
  *  
  * 
  * <h3>Time shift configuration</h3>
@@ -92,7 +93,7 @@ import java.util.regex.Pattern;
  * 		<delegate>com.hapiware.asm.timemachine.TimeMachineAgentDelegate</delegate>
  * 		<classpath>
  * 			<entry>/users/me/agent/target/timemachine-delegate-2.0.0.jar</entry>
- * 			<entry>/usr/local/asm-3.1/lib/all/all-asm-3.1.jar</entry>
+ * 			<entry>/usr/local/asm-3.1/lib/asm-3.1.jar</entry>
  * 		</classpath>
  *		<!--
  *			Moves time two years and 5 months backward.
@@ -109,7 +110,7 @@ import java.util.regex.Pattern;
  * 		<delegate>com.hapiware.asm.timemachine.TimeMachineAgentDelegate</delegate>
  * 		<classpath>
  * 			<entry>/users/me/agent/target/timemachine-delegate-2.0.0.jar</entry>
- * 			<entry>/usr/local/asm-3.1/lib/all/all-asm-3.1.jar</entry>
+ * 			<entry>/usr/local/asm-3.1/lib/asm-3.1.jar</entry>
  * 		</classpath>
  * 
  * 
@@ -132,7 +133,7 @@ import java.util.regex.Pattern;
  * 		<delegate>com.hapiware.asm.timemachine.TimeMachineAgentDelegate</delegate>
  * 		<classpath>
  * 			<entry>/users/me/agent/target/timemachine-delegate-2.0.0.jar</entry>
- * 			<entry>/usr/local/asm-3.1/lib/all/all-asm-3.1.jar</entry>
+ * 			<entry>/usr/local/asm-3.1/lib/asm-3.1.jar</entry>
  * 		</classpath>
  * 
  * 		<filter>
