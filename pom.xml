@@ -8,6 +8,28 @@
 	<groupId>com.hapiware.agent</groupId>
 	<artifactId>timemachine-delegate</artifactId>
 	<version>2.0.0</version>
+	<description>
+		TimeMachine is a delegate module for the General Java Agent to shift system time without
+		touching the system clock.
+	</description>
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>http://github.com/Hapi/Java-Agent-Timemachine/raw/master/src/main/resources/LICENSE</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<url>http://github.com/Hapi/Java-Agent-Timemachine</url>
+		<connection>scm:git:http://github.com/Hapi/Java-Agent-Timemachine</connection>
+	</scm>
+	<developers>
+		<developer>
+			<id>hapi</id>
+			<name>Hapi</name>
+			<email>hapi@hapiware.com</email>
+		</developer>
+	</developers>
 	
 	<build>
 		<plugins>
@@ -31,6 +53,31 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Implementation-Title>${project.build.finalName}</Implementation-Title> 
+							<Implementation-Version>${project.version}</Implementation-Version>
+							<Implementation-Vendor>http://www.hapiware.com</Implementation-Vendor>
+						</manifestEntries>
+					</archive>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -98,4 +145,40 @@
 			</plugin>
 		</plugins>
 	</reporting>
+	
+	<distributionManagement>
+		<repository>
+			<id>hapiware-repo</id>
+			<url>scp://hapi.github.com/maven2</url>
+		</repository>
+	</distributionManagement>
+	
+	<profiles>
+		<profile>
+			<id>sign-artifacts</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
